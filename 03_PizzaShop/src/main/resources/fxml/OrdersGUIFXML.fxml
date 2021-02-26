@@ -24,10 +24,10 @@
            <ComboBox fx:id="orderQuantity"></ComboBox>
       </HBox>
        <VBox alignment="CENTER" spacing="10">
-           <Button minWidth="150" fx:id="addToOrder">Add to order</Button>
-           <Button minWidth="150" fx:id="placeOrder">Place order</Button>
+           <Button minWidth="150" fx:id="addToOrder">Add to orderPizza</Button>
+           <Button minWidth="150" fx:id="placeOrder">Place orderPizza</Button>
            <Button minWidth="150" fx:id="orderServed">Order served</Button>
-           <Button minWidth="150" fx:id="payOrder">Pay order</Button>
+           <Button minWidth="150" fx:id="payOrder">Pay orderPizza</Button>
            <Button minWidth="150" fx:id="newOrder">Exit table</Button>
            <Label fx:id="orderStatus"></Label>
        </VBox>

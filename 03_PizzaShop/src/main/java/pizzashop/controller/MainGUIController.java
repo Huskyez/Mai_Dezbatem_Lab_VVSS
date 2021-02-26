@@ -2,24 +2,15 @@ package pizzashop.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import  javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
-import javafx.scene.text.FontWeight;
 import pizzashop.gui.OrdersGUI;
-import pizzashop.service.PizzaService;
-
-import static javafx.scene.paint.Color.DARKBLUE;
+import pizzashop.service.Service;
 
 
 public class MainGUIController  {
@@ -51,11 +42,11 @@ public class MainGUIController  {
     OrdersGUI  table7Orders = new OrdersGUI();
     OrdersGUI  table8Orders = new OrdersGUI();
 
-    PizzaService service;
+    Service service;
 
     public MainGUIController(){}
 
-    public void setService(PizzaService service){
+    public void setService(Service service){
         this.service=service;
         tableHandlers();
     }
@@ -117,7 +108,7 @@ public class MainGUIController  {
                             "4.On the Kitchen window Click on the order in the Orders List and Press the Cook button, " + System.lineSeparator()
                             +"then after Click on the order in the Orders list and then on the Ready button"+ System.lineSeparator()
                     +System.lineSeparator()+
-                             "5.On the Table order form press the Order served button, at the end press" + System.lineSeparator()
+                             "5.On the Table order form press the OrderPizza served button, at the end press" + System.lineSeparator()
                              +"the Pay order button "+ System.lineSeparator()
             );
 
