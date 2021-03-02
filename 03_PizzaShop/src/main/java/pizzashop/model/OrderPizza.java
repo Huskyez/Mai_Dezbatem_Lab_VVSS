@@ -1,12 +1,11 @@
 package pizzashop.model;
 
-public class OrderPizza {
+public class OrderPizza extends MenuPizza{
     private Integer quantity;
-    private final MenuPizza menuPizza;
 
-    public OrderPizza(Integer quantity, MenuPizza menuPizza) {
+    public OrderPizza(String mName, Double mPrice, Integer quantity) {
+        super(mName, mPrice * quantity);
         this.quantity = quantity;
-        this.menuPizza = menuPizza;
     }
 
     public Integer getQuantity() {
@@ -15,9 +14,5 @@ public class OrderPizza {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public MenuPizza getMenuPizza() {
-        return menuPizza;
     }
 }

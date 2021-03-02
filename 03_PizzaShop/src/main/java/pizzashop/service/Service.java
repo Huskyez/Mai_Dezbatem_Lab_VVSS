@@ -20,6 +20,9 @@ public class Service {
     }
 
     public List<MenuPizza> getMenuData(){ return menuRepo.getMenu(); }
+    public Order getOrder(int tableNr) {
+        return orderRepository.getOrder(tableNr);
+    }
 
     public void addToOrder(OrderPizza orderPizza, Integer tableNr) {
         Order currentOrder = this.orderRepository.getOrder(tableNr);

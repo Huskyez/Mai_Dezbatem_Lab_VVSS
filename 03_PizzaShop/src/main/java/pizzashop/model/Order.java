@@ -31,7 +31,7 @@ public class Order {
     }
 
     public void addToOrder(OrderPizza orderPizza) {
-        String pizzaName = orderPizza.getMenuPizza().getName();
+        String pizzaName = orderPizza.getName();
         if (this.orderList.containsKey(pizzaName)) {
             this.orderList.get(pizzaName).setQuantity(this.orderList.get(pizzaName).getQuantity() + orderPizza.getQuantity());
         }
@@ -39,6 +39,6 @@ public class Order {
             this.orderList.put(pizzaName, orderPizza);
         }
 
-        this.totalPrice += orderPizza.getQuantity() * orderPizza.getMenuPizza().getPrice();
+        this.totalPrice += orderPizza.getPrice();
     }
 }

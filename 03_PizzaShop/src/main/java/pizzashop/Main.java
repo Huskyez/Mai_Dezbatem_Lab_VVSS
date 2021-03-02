@@ -13,6 +13,7 @@ import pizzashop.controller.MainGUIController;
 import pizzashop.gui.KitchenGUI;
 import pizzashop.model.PaymentType;
 import pizzashop.repository.MenuRepository;
+import pizzashop.repository.OrderRepository;
 import pizzashop.repository.PaymentRepository;
 import pizzashop.service.Service;
 
@@ -25,7 +26,8 @@ public class Main extends Application {
 
         MenuRepository repoMenu=new MenuRepository();
         PaymentRepository payRepo= new PaymentRepository();
-        Service service = new Service(repoMenu, payRepo);
+        OrderRepository orderRepository = new OrderRepository();
+        Service service = new Service(repoMenu, orderRepository, payRepo);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainFXML.fxml"));
         //VBox box = loader.load();
@@ -35,29 +37,29 @@ public class Main extends Application {
         primaryStage.setTitle("PizeriaX");
         primaryStage.setResizable(false);
         primaryStage.setAlwaysOnTop(false);
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to exit the Main window?", ButtonType.YES, ButtonType.NO);
-                Optional<ButtonType> result = exitAlert.showAndWait();
-                if (result.get() == ButtonType.YES){
-                    //Stage stage = (Stage) this.getScene().getWindow();
-                    System.out.println("Incasari cash: "+service.getTotalAmount(PaymentType.Cash));
-                    System.out.println("Incasari card: "+service.getTotalAmount(PaymentType.Card));
-
-                    primaryStage.close();
-                }
-                // consume event
-                else if (result.get() == ButtonType.NO){
-                    event.consume();
-                }
-                else {
-                    event.consume();
-
-                }
-
-            }
-        });
+//        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//            @Override
+//            public void handle(WindowEvent event) {
+//                Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to exit the Main window?", ButtonType.YES, ButtonType.NO);
+//                Optional<ButtonType> result = exitAlert.showAndWait();
+//                if (result.get() == ButtonType.YES){
+//                    //Stage stage = (Stage) this.getScene().getWindow();
+//                    System.out.println("Incasari cash: "+service.getTotalAmount(PaymentType.Cash));
+//                    System.out.println("Incasari card: "+service.getTotalAmount(PaymentType.Card));
+//
+//                    primaryStage.close();
+//                }
+//                // consume event
+//                else if (result.get() == ButtonType.NO){
+//                    event.consume();
+//                }
+//                else {
+//                    event.consume();
+//
+//                }
+//
+//            }
+//        });
         primaryStage.setScene(new Scene(box));
         primaryStage.show();
         KitchenGUI kitchenGUI = new KitchenGUI();
