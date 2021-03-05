@@ -5,13 +5,17 @@ import pizzashop.repository.MenuRepository;
 import pizzashop.repository.OrderRepository;
 import pizzashop.repository.PaymentRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class Service {
+public class Service extends Observable{
 
     private final MenuRepository menuRepo;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+
+    public boolean isKitchenClosed = false;
 
     public Service(MenuRepository menuRepo, OrderRepository orderRepository, PaymentRepository paymentRepository){
         this.menuRepo=menuRepo;
@@ -34,6 +38,8 @@ public class Service {
         else {
             currentOrder.addToOrder(orderPizza);
         }
+
+        this.changeOrderState(tableNr, OrderState.WAITING);
     }
 
     public void makePayment(Integer tableNr, PaymentType type) throws Exception {
@@ -56,5 +62,34 @@ public class Service {
         catch (Exception e) {
             return 0.0;
         }
+    }
+
+    public void changeOrderState(int tableNr, OrderState state) {
+        Order order = this.orderRepository.getOrder(tableNr);
+        if (order != null) {
+            order.setState(state);
+
+            notifyAllObservers();
+        }
+    }
+
+    public List<Order> getAllOrders() {
+        return this.orderRepository.getAllOrders();
+    }
+
+    private List<Payment> getPaymentsByDate(LocalDate date) {
+        return this.paymentRepository.readPayments().stream().filter(x -> x.getDate().equals(date)).collect(Collectors.toList());
+    }
+
+    public List<Payment> getPayments(LocalDate date, PaymentType type) {
+        return this.getPaymentsByDate(date).stream().filter(x -> x.getType() == type).collect(Collectors.toList());
+    }
+
+    public double calculateTotal(List<Payment> payments) {
+        return payments.stream().map(Payment::getAmount).reduce(0.0, Double::sum);
+    }
+
+    public boolean isRestaurantEmpty() {
+        return this.orderRepository.getAllOrders().isEmpty();
     }
 }

@@ -4,13 +4,15 @@ import pizzashop.model.Payment;
 import pizzashop.model.PaymentType;
 
 import java.io.*;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class PaymentRepository {
-    private static String filename = "data/payments.txt";
+    private static final String filename = "data/payments.txt";
 
     public PaymentRepository(){
     }
@@ -18,8 +20,9 @@ public class PaymentRepository {
     public List<Payment> readPayments(){
         List<Payment> paymentList = new ArrayList<>();
 
-        ClassLoader classLoader = PaymentRepository.class.getClassLoader();
-        File file = new File(classLoader.getResource(filename).getFile());
+//        ClassLoader classLoader = PaymentRepository.class.getClassLoader();
+//        File file = new File(classLoader.getResource(filename).getFile());
+        File file = new File("D:\\An3_sem2\\VVSS\\Mai_Dezbatem_Lab_VVSS\\03_PizzaShop\\src\\main\\resources\\data\\payments.txt");
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file));
@@ -52,8 +55,9 @@ public class PaymentRepository {
     }
 
     public void writePayment(Payment payment){
-        ClassLoader classLoader = PaymentRepository.class.getClassLoader();
-        File file = new File(classLoader.getResource(filename).getFile());
+//        ClassLoader classLoader = PaymentRepository.class.getClassLoader();
+//        File file = new File(Objects.requireNonNull(classLoader.getResource(filename)).getFile());
+        File file = new File("D:\\An3_sem2\\VVSS\\Mai_Dezbatem_Lab_VVSS\\03_PizzaShop\\src\\main\\resources\\data\\payments.txt");
 
         BufferedWriter bw = null;
         try {

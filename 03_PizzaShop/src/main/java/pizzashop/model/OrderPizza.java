@@ -15,4 +15,10 @@ public class OrderPizza extends MenuPizza{
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public String toString() {
+        return super.getName() +
+                " x " + quantity;
+    }
 }

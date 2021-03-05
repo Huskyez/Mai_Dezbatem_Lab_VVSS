@@ -33,7 +33,8 @@ public class PaymentAlert implements PaymentOperation {
         System.out.println("Payment choice needed...");
         System.out.println("--------------------------");
     }
-      public void showPaymentAlert(int tableNumber, double totalAmount ) {
+
+    public boolean showPaymentAlert(int tableNumber, double totalAmount ) throws Exception {
         Alert paymentAlert = new Alert(Alert.AlertType.CONFIRMATION);
         paymentAlert.setTitle("Payment for Table "+tableNumber);
         paymentAlert.setHeaderText("Total amount: " + totalAmount);
@@ -45,14 +46,18 @@ public class PaymentAlert implements PaymentOperation {
         Optional<ButtonType> result = paymentAlert.showAndWait();
         if (result.get() == cardPayment) {
             cardPayment();
-//            service.addPayment(tableNumber, PaymentType.Card,totalAmount);
+            service.makePayment(tableNumber, PaymentType.Card);
+            return true;
         } else if (result.get() == cashPayment) {
             cashPayment();
-//            service.addPayment(tableNumber, PaymentType.Cash,totalAmount);
+            service.makePayment(tableNumber, PaymentType.Cash);
+            return true;
         } else if (result.get() == cancel) {
-             cancelPayment();
+            cancelPayment();
+            return false;
         } else {
             cancelPayment();
+            return false;
         }
     }
 }

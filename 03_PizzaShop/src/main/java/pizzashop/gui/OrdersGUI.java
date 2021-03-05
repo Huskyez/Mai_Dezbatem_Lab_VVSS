@@ -20,7 +20,6 @@ public class OrdersGUI {
         return tableNumber;
     }
     public void setTableNumber(int tableNumber) { this.tableNumber = tableNumber; }
-    private Service service;
 
     public void displayOrdersForm(Service service){
      SplitPane splitPane = null;
@@ -33,14 +32,6 @@ public class OrdersGUI {
             Stage orderStage = new Stage();
             orderStage.setTitle("Table"+getTableNumber()+" order form");
             orderStage.setResizable(false);
-            // disable X on the window
-            orderStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    // consume event
-                    event.consume();
-                }
-            });
             orderStage.setScene(new Scene(splitPane));
             orderStage.show();
 

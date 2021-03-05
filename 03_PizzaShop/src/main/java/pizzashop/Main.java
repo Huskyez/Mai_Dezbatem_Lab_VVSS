@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import pizzashop.controller.KitchenGUIController;
 import pizzashop.controller.MainGUIController;
 import pizzashop.gui.KitchenGUI;
 import pizzashop.model.PaymentType;
@@ -37,33 +38,37 @@ public class Main extends Application {
         primaryStage.setTitle("PizeriaX");
         primaryStage.setResizable(false);
         primaryStage.setAlwaysOnTop(false);
-//        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent event) {
-//                Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to exit the Main window?", ButtonType.YES, ButtonType.NO);
-//                Optional<ButtonType> result = exitAlert.showAndWait();
-//                if (result.get() == ButtonType.YES){
-//                    //Stage stage = (Stage) this.getScene().getWindow();
-//                    System.out.println("Incasari cash: "+service.getTotalAmount(PaymentType.Cash));
-//                    System.out.println("Incasari card: "+service.getTotalAmount(PaymentType.Card));
-//
-//                    primaryStage.close();
-//                }
-//                // consume event
-//                else if (result.get() == ButtonType.NO){
-//                    event.consume();
-//                }
-//                else {
-//                    event.consume();
-//
-//                }
-//
-//            }
-//        });
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (service.isKitchenClosed) {
+                    Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to exit the Main window?", ButtonType.YES, ButtonType.NO);
+                    Optional<ButtonType> result = exitAlert.showAndWait();
+                    if (result.get() == ButtonType.YES){
+                        //Stage stage = (Stage) this.getScene().getWindow();
+                        ((MainGUIController) loader.getController()).showPayments();
+
+                        primaryStage.close();
+                    }
+                    // consume event
+                    else if (result.get() == ButtonType.NO){
+                        event.consume();
+                    }
+                    else {
+                        event.consume();
+
+                    }
+                }
+                else {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "Kitchen is not closed");
+                    alert.showAndWait();
+                    event.consume();
+                }
+            }
+        });
         primaryStage.setScene(new Scene(box));
         primaryStage.show();
-        KitchenGUI kitchenGUI = new KitchenGUI();
-        kitchenGUI.KitchenGUI();
+        KitchenGUI kitchenGUI = new KitchenGUI(service);
     }
 
     public static void main(String[] args) { launch(args);

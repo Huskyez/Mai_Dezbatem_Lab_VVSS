@@ -1,19 +1,16 @@
 package pizzashop.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.util.converter.NumberStringConverter;
 import pizzashop.model.MenuPizza;
 import pizzashop.model.Order;
 import pizzashop.model.OrderPizza;
+import pizzashop.model.OrderState;
 import pizzashop.service.PaymentAlert;
 import pizzashop.service.Service;
 
@@ -52,6 +49,13 @@ public class OrdersGUIController {
 
     @FXML
     void handleAddToOrder(ActionEvent event) {
+        if (this.service.isKitchenClosed) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Kitchen is closed!");
+            alert.showAndWait();
+            this.handleBack(event);
+            return;
+        }
+
         MenuPizza menuPizza = menuTable.getSelectionModel().getSelectedItem();
 
         Integer quantity = quantitySpinner.getValue();
@@ -62,25 +66,62 @@ public class OrdersGUIController {
         }
         else {
             if (menuPizza != null) {
+                Order order = this.service.getOrder(this.tableNumber);
+                if (order != null && order.getState().equals(OrderState.READY)){
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "Order has already been placed!");
+                    alert.showAndWait();
+                    return;
+                }
                 OrderPizza orderPizza = new OrderPizza(menuPizza.getName(), menuPizza.getPrice(), quantity);
                 service.addToOrder(orderPizza, this.tableNumber);
 
-                this.orderList.add(orderPizza);
+                this.orderList.setAll(this.service.getOrder(this.tableNumber).getOrderList().values());
                 this.orderTable.setItems(orderList);
 
                 this.totalPriceLabel.setText(this.service.getTotalPrice(tableNumber).toString());
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Must select a pizza from menu!");
+                alert.showAndWait();
             }
         }
     }
 
     @FXML
     void handleMakePayment(ActionEvent event) {
+        Order order = this.service.getOrder(this.tableNumber);
 
+        if (order != null && order.getState() == OrderState.READY) {
+            try {
+                boolean isPaid = paymentAlert.showPaymentAlert(tableNumber, order.getTotalPrice());
+                if (isPaid) {
+                    this.service.notifyAllObservers();
+                    this.handleBack(event);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Order must be ready!");
+            alert.showAndWait();
+        }
     }
 
     @FXML
     void handlePlaceOrder(ActionEvent event) {
-
+        Order order = this.service.getOrder(this.tableNumber);
+        if (order == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "There is no order!");
+            alert.showAndWait();
+            return;
+        }
+        if (order.getState().equals(OrderState.READY)){
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Order has already been placed!");
+            alert.showAndWait();
+            return;
+        }
+        this.service.changeOrderState(this.tableNumber, OrderState.RECEIVED);
     }
 
     private ObservableList<MenuPizza> menuData;
@@ -88,6 +129,8 @@ public class OrdersGUIController {
 
     private Service service;
     private int tableNumber;
+
+    private PaymentAlert paymentAlert;
 
 //    public ObservableList<String> observableList;
 //    private TableView<OrderPizza> table = new TableView<OrderPizza>();
@@ -100,6 +143,7 @@ public class OrdersGUIController {
         this.service=service;
         this.tableNumber=tableNumber;
         initData();
+        this.paymentAlert = new PaymentAlert(service);
     }
 
     private void initData(){

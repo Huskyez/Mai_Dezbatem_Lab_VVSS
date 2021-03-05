@@ -2,7 +2,9 @@ package pizzashop.repository;
 
 import pizzashop.model.Order;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OrderRepository {
@@ -22,5 +24,9 @@ public class OrderRepository {
 
     public void removeOrder(Integer tableNr) {
         this.orderMap.remove(tableNr);
+    }
+
+    public List<Order> getAllOrders() {
+        return new ArrayList<>(this.orderMap.values());
     }
 }
