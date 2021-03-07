@@ -1,0 +1,16 @@
+
+x
+java:S1192"[Define a constant instead of duplicating this literal "--------------------------" 6 times.(ú•€Ë8ƒ”’ê€/
+U	java:S106""9Replace this use of System.out or System.err by a logger.(ú•€Ë8ƒ”’ê€/
+U	java:S106 "9Replace this use of System.out or System.err by a logger.(ú•€Ë8ƒ”’ê€/
+R
+java:S3655."5Call "result.isPresent()" before accessing the value.(îçÐµ8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(Òúº‘8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ÏúËá8ƒ”’ê€/
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(ç”ŠÎûÿÿÿÿ8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ú•€Ë8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ú•€Ë8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ú•€Ë8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(á•î˜8ƒ”’ê€/
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ú•€Ë8ƒ”’ê€/
+Z	java:S106!"9Replace this use of System.out or System.err by a logger.(‡à¼Óøÿÿÿÿ8ƒ”’ê€/
