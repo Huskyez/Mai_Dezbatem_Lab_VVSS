@@ -7,6 +7,7 @@ import pizzashop.repository.PaymentRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Service extends Observable{
@@ -28,7 +29,18 @@ public class Service extends Observable{
         return orderRepository.getOrder(tableNr);
     }
 
-    public void addToOrder(OrderPizza orderPizza, Integer tableNr) {
+    public void addToOrder(OrderPizza orderPizza, Integer tableNr) throws PizzaException {
+
+        if(orderPizza.getQuantity()<1){
+            throw new PizzaException("Quantity must be greater than 0");
+        }
+
+        Optional<MenuPizza> myName = this.getMenuData().stream().filter(x -> orderPizza.getName().equals(x.getName())).findFirst();
+
+        if(!myName.isPresent()){
+            throw new PizzaException("Pizza's name is not valid");
+        }
+
         Order currentOrder = this.orderRepository.getOrder(tableNr);
         if (currentOrder == null) {
             Order order = new Order(tableNr);

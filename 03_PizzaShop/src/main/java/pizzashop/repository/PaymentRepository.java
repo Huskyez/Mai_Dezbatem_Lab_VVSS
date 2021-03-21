@@ -14,7 +14,7 @@ public class PaymentRepository {
 
     public List<Payment> readPayments(){
         List<Payment> paymentList = new ArrayList<>();
-        File file = new File("D:\\An3_sem2\\VVSS\\Mai_Dezbatem_Lab_VVSS\\03_PizzaShop\\src\\main\\resources\\data\\payments.txt");
+        File file = new File("D:\\Facultate\\Sem6\\VVSS\\Mai_Dezbatem_Lab_VVSS\\03_PizzaShop\\src\\main\\resources\\data\\payments.txt");
         try(BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = null;
             while((line=br.readLine())!=null){
@@ -42,7 +42,7 @@ public class PaymentRepository {
     }
 
     public void writePayment(Payment payment){
-        File file = new File("D:\\An3_sem2\\VVSS\\Mai_Dezbatem_Lab_VVSS\\03_PizzaShop\\src\\main\\resources\\data\\payments.txt");
+        File file = new File("D:\\Facultate\\Sem6\\VVSS\\Mai_Dezbatem_Lab_VVSS\\03_PizzaShop\\src\\main\\resources\\data\\payments.txt");
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
             bw.write(payment.toString());
             bw.newLine();

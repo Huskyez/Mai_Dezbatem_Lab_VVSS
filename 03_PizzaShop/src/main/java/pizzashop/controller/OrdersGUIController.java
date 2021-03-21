@@ -12,6 +12,7 @@ import pizzashop.model.Order;
 import pizzashop.model.OrderPizza;
 import pizzashop.model.OrderState;
 import pizzashop.service.PaymentAlert;
+import pizzashop.service.PizzaException;
 import pizzashop.service.Service;
 
 public class OrdersGUIController {
@@ -73,7 +74,13 @@ public class OrdersGUIController {
                     return;
                 }
                 OrderPizza orderPizza = new OrderPizza(menuPizza.getName(), menuPizza.getPrice(), quantity);
-                service.addToOrder(orderPizza, this.tableNumber);
+                try {
+                    service.addToOrder(orderPizza, this.tableNumber);
+                } catch (PizzaException e) {
+                    e.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage());
+                    alert.showAndWait();
+                }
 
                 this.orderList.setAll(this.service.getOrder(this.tableNumber).getOrderList().values());
                 this.orderTable.setItems(orderList);
