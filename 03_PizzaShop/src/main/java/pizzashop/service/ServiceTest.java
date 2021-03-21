@@ -1,8 +1,6 @@
 package pizzashop.service;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import pizzashop.model.Order;
 import pizzashop.model.OrderPizza;
 import pizzashop.repository.MenuRepository;
@@ -31,6 +29,7 @@ class ServiceTest {
         srv = new Service(menuRepo, orderRepo, payRepo);    }
 
     @Test
+    @Tag("ECP")
     public void TC1_ECP_all_valid(){
         double price = 11.00;
         int quantity = 4;
@@ -46,7 +45,10 @@ class ServiceTest {
         }
     }
 
+
+
     @Test
+    @Tag("ECP")
     public void TC3_ECP_name_invalid(){
         double price = 11.00;
         int quantity = 4;
@@ -62,6 +64,7 @@ class ServiceTest {
     }
 
     @Test
+    @Tag("ECP")
     public void TC5_ECP_quantity_invalid(){
         double price = 11.00;
         int quantity = -67;
@@ -75,8 +78,12 @@ class ServiceTest {
             assertEquals("Quantity must be greater than 0", e.getMessage());
         }
     }
+
+    @Timeout(1)
+    @DisplayName("First BVA")
     // quantity = 1
     @Test
+    @Tag("BVA")
     public void TC1_BVA(){
         double price = 11.00;
         int quantity = 1;
@@ -94,6 +101,7 @@ class ServiceTest {
 
     // quantity = -1
     @Test
+    @Tag("BVA")
     public void TC2_BVA(){
         double price = 11.00;
         int quantity = -1;
@@ -109,6 +117,7 @@ class ServiceTest {
 
     // quantity = 0
     @Test
+    @Tag("BVA")
     public void TC3_BVA(){
         double price = 11.00;
         int quantity = 0;
@@ -124,6 +133,7 @@ class ServiceTest {
 
     // quantity = max-1
     @Test
+    @Tag("BVA")
     public void TC4_BVA(){
         double price = 11.00;
         int quantity = Integer.MAX_VALUE-1;
@@ -141,6 +151,7 @@ class ServiceTest {
 
     // quantity = max
     @Test
+    @Tag("BVA")
     public void TC5_BVA(){
         double price = 11.00;
         int quantity = Integer.MAX_VALUE;
@@ -157,7 +168,9 @@ class ServiceTest {
     }
 
     // quantity = max + 1
+    @RepeatedTest(1)
     @Test
+    @Tag("BVA")
     public void TC6_BVA(){
         double price = 11.00;
         int quantity = Integer.MAX_VALUE + 1;
