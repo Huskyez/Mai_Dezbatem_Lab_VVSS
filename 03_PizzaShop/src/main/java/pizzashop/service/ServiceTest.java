@@ -30,7 +30,7 @@ class ServiceTest {
 
     @Test
     @Tag("ECP")
-    public void TC1_ECP_all_valid(){
+    public void addToOrder_allValid_addedToOrder(){
         double price = 11.00;
         int quantity = 4;
         String name = "Calzone";
@@ -49,7 +49,7 @@ class ServiceTest {
 
     @Test
     @Tag("ECP")
-    public void TC3_ECP_name_invalid(){
+    public void addToOrder_nameInvalid_exception(){
         double price = 11.00;
         int quantity = 4;
         String name = "Roman Pitesti";
@@ -59,13 +59,13 @@ class ServiceTest {
             fail();
 
         } catch (PizzaException e) {
-            assertEquals("Pizza's name is not valid", e.getMessage());
+            assertEquals(Service.INVALID_NAME_MESSAGE, e.getMessage());
         }
     }
 
     @Test
     @Tag("ECP")
-    public void TC5_ECP_quantity_invalid(){
+    public void addToOrder_quantityInvalid_exception(){
         double price = 11.00;
         int quantity = -67;
         String name = "Quatro Stagioni";
@@ -75,7 +75,7 @@ class ServiceTest {
             fail();
 
         } catch (PizzaException e) {
-            assertEquals("Quantity must be greater than 0", e.getMessage());
+            assertEquals(Service.INVALID_QUANTITY_MESSAGE, e.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ class ServiceTest {
     // quantity = 1
     @Test
     @Tag("BVA")
-    public void TC1_BVA(){
+    public void addToOrder_quantity1_addedToOrder(){
         double price = 11.00;
         int quantity = 1;
         String name = "Calzone";
@@ -102,7 +102,7 @@ class ServiceTest {
     // quantity = -1
     @Test
     @Tag("BVA")
-    public void TC2_BVA(){
+    public void addToOrder_quantityMinus1_exception(){
         double price = 11.00;
         int quantity = -1;
         String name = "Calzone";
@@ -111,14 +111,14 @@ class ServiceTest {
             srv.addToOrder(orderPizza, 5);
             fail();
         } catch (PizzaException e) {
-            assertEquals("Quantity must be greater than 0", e.getMessage());
+            assertEquals(Service.INVALID_QUANTITY_MESSAGE, e.getMessage());
         }
     }
 
     // quantity = 0
     @Test
     @Tag("BVA")
-    public void TC3_BVA(){
+    public void addToOrder_quantity0_exception(){
         double price = 11.00;
         int quantity = 0;
         String name = "Calzone";
@@ -127,14 +127,14 @@ class ServiceTest {
             srv.addToOrder(orderPizza, 5);
             fail();
         } catch (PizzaException e) {
-            assertEquals("Quantity must be greater than 0", e.getMessage());
+            assertEquals(Service.INVALID_QUANTITY_MESSAGE, e.getMessage());
         }
     }
 
     // quantity = max-1
     @Test
     @Tag("BVA")
-    public void TC4_BVA(){
+    public void addToOrder_quantityMaxMinus1_addedToOrder(){
         double price = 11.00;
         int quantity = Integer.MAX_VALUE-1;
         String name = "Calzone";
@@ -152,7 +152,7 @@ class ServiceTest {
     // quantity = max
     @Test
     @Tag("BVA")
-    public void TC5_BVA(){
+    public void addToOrder_quantityMax_addedToOrder(){
         double price = 11.00;
         int quantity = Integer.MAX_VALUE;
         String name = "Calzone";
@@ -169,9 +169,8 @@ class ServiceTest {
 
     // quantity = max + 1
     @RepeatedTest(1)
-    @Test
     @Tag("BVA")
-    public void TC6_BVA(){
+    public void addToOrder_quantityMaxPlus1_exception(){
         double price = 11.00;
         int quantity = Integer.MAX_VALUE + 1;
         String name = "Calzone";
@@ -180,8 +179,13 @@ class ServiceTest {
             srv.addToOrder(orderPizza, 5);
             fail();
         } catch (PizzaException e) {
-            assertEquals("Quantity must be greater than 0", e.getMessage());
+            assertEquals(Service.INVALID_QUANTITY_MESSAGE, e.getMessage());
         }
     }
 
+    @Test
+    @Disabled
+    public void disabled() {
+        System.out.println("disabled");
+    }
 }

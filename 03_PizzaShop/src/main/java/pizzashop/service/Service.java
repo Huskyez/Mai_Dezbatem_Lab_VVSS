@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Service extends Observable{
+    public static final String INVALID_QUANTITY_MESSAGE = "Quantity must be greater than 0";
+    public static final String INVALID_NAME_MESSAGE = "Pizza's name is not valid";
 
     private final MenuRepository menuRepo;
     private final OrderRepository orderRepository;
@@ -32,13 +34,13 @@ public class Service extends Observable{
     public void addToOrder(OrderPizza orderPizza, Integer tableNr) throws PizzaException {
 
         if(orderPizza.getQuantity()<1){
-            throw new PizzaException("Quantity must be greater than 0");
+            throw new PizzaException(INVALID_QUANTITY_MESSAGE);
         }
 
         Optional<MenuPizza> myName = this.getMenuData().stream().filter(x -> orderPizza.getName().equals(x.getName())).findFirst();
 
         if(!myName.isPresent()){
-            throw new PizzaException("Pizza's name is not valid");
+            throw new PizzaException(INVALID_NAME_MESSAGE);
         }
 
         Order currentOrder = this.orderRepository.getOrder(tableNr);
