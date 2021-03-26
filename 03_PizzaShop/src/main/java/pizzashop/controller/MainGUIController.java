@@ -18,6 +18,7 @@ import pizzashop.model.Order;
 import pizzashop.model.OrderState;
 import pizzashop.model.PaymentType;
 import pizzashop.service.Observer;
+import pizzashop.service.PaymentException;
 import pizzashop.service.Service;
 
 import java.time.LocalDate;
@@ -94,11 +95,19 @@ public class MainGUIController implements Observer {
     }
 
     public void showPayments() {
-        double cardTotal = this.service.calculateTotal(this.service.getPayments(LocalDate.now(), PaymentType.Card));
-        double cashTotal = this.service.calculateTotal(this.service.getPayments(LocalDate.now(), PaymentType.Cash));
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, String.format("Card: %f\nCash: %f", cardTotal, cashTotal));
-        alert.showAndWait();
+        try {
+            double cardTotal = this.service.calculateTotal(this.service.getPayments(LocalDate.now(), PaymentType.Card));
+            double cashTotal = this.service.calculateTotal(this.service.getPayments(LocalDate.now(), PaymentType.Cash));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, String.format("Card: %f\nCash: %f", cardTotal, cashTotal));
+            alert.showAndWait();
+        } catch (PaymentException e) {
+            e.printStackTrace();
+//            Alert alert = new Alert(Alert.AlertType.ERROR, String.format("Card: %f\nCash: %f", cardTotal, cashTotal));
+//            alert.showAndWait();
+        }
+
+
     }
 
     @Override

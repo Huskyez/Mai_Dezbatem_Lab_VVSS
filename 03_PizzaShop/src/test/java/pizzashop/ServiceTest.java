@@ -1,4 +1,4 @@
-package pizzashop.service;
+package pizzashop;
 
 import org.junit.jupiter.api.*;
 import pizzashop.model.Order;
@@ -6,6 +6,8 @@ import pizzashop.model.OrderPizza;
 import pizzashop.repository.MenuRepository;
 import pizzashop.repository.OrderRepository;
 import pizzashop.repository.PaymentRepository;
+import pizzashop.service.PizzaException;
+import pizzashop.service.Service;
 
 import static org.junit.jupiter.api.Assertions.*;
 

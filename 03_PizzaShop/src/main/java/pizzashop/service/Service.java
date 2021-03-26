@@ -5,7 +5,9 @@ import pizzashop.repository.MenuRepository;
 import pizzashop.repository.OrderRepository;
 import pizzashop.repository.PaymentRepository;
 
+import javax.sql.rowset.serial.SerialException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 public class Service extends Observable{
     public static final String INVALID_QUANTITY_MESSAGE = "Quantity must be greater than 0";
     public static final String INVALID_NAME_MESSAGE = "Pizza's name is not valid";
+    public static final String INVALID_DATE_MESSAGE = "Invalid Date";
 
     private final MenuRepository menuRepo;
     private final OrderRepository orderRepository;
@@ -95,8 +98,24 @@ public class Service extends Observable{
         return this.paymentRepository.readPayments().stream().filter(x -> x.getDate().equals(date)).collect(Collectors.toList());
     }
 
-    public List<Payment> getPayments(LocalDate date, PaymentType type) {
-        return this.getPaymentsByDate(date).stream().filter(x -> x.getType() == type).collect(Collectors.toList());
+    public List<Payment> getPayments(LocalDate date, PaymentType type) throws PaymentException {
+//        return this.getPaymentsByDate(date).stream().filter(x -> x.getType() == type).collect(Collectors.toList());
+
+        if (date.isBefore(LocalDate.of(1970, 1, 1))) {
+            throw new PaymentException(INVALID_DATE_MESSAGE);
+        }
+
+        List<Payment> payments = new ArrayList<>();
+
+        for (Payment payment : paymentRepository.readPayments()) {
+            if (payment.getDate().equals(date)) {
+                if (payment.getType().equals(type)) {
+                    payments.add(payment);
+                }
+            }
+        }
+
+        return payments;
     }
 
     public double calculateTotal(List<Payment> payments) {
