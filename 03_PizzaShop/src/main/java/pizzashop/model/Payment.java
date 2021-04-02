@@ -3,6 +3,7 @@ package pizzashop.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Payment {
 
@@ -23,6 +24,19 @@ public class Payment {
         this.type = type;
         this.amount = amount;
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Payment payment = (Payment) o;
+        return tableNumber == payment.tableNumber && Double.compare(payment.amount, amount) == 0 && type == payment.type && Objects.equals(date, payment.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tableNumber, type, amount, date);
     }
 
     public LocalDate getDate() {

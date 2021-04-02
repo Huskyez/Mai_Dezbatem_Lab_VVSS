@@ -64,7 +64,7 @@ public class Service extends Observable{
 
         if (currentOrder != null) {
             this.orderRepository.removeOrder(tableNr);
-            this.paymentRepository.writePayment(new Payment(tableNr, type, currentOrder.getTotalPrice()));
+            this.paymentRepository.writePayment(new Payment(tableNr, type, currentOrder.getTotalPrice()), true);
 
             return;
         }
@@ -106,11 +106,12 @@ public class Service extends Observable{
         }
 
         List<Payment> payments = new ArrayList<>();
+        List<Payment> savedPayments = paymentRepository.readPayments();
 
-        for (Payment payment : paymentRepository.readPayments()) {
-            if (payment.getDate().equals(date)) {
-                if (payment.getType().equals(type)) {
-                    payments.add(payment);
+        for (int i = 0; i < savedPayments.size(); i++) {
+            if (savedPayments.get(i).getDate().equals(date)) {
+                if (savedPayments.get(i).getType().equals(type)) {
+                    payments.add(savedPayments.get(i));
                 }
             }
         }

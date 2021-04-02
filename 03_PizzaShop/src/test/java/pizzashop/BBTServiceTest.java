@@ -11,7 +11,7 @@ import pizzashop.service.Service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ServiceTest {
+class BBTServiceTest {
     private static Service srv;
     @BeforeAll
     public static void prepareObject(){
@@ -23,12 +23,13 @@ class ServiceTest {
     }
 
     @AfterEach
-    public void clear(){
+    public void clear() {
         OrderRepository orderRepo = new OrderRepository();
         MenuRepository menuRepo = new MenuRepository();
         PaymentRepository payRepo = new PaymentRepository();
 
-        srv = new Service(menuRepo, orderRepo, payRepo);    }
+        srv = new Service(menuRepo, orderRepo, payRepo);
+    }
 
     @Test
     @Tag("ECP")
