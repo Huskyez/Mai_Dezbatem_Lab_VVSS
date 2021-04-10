@@ -1,157 +1,204 @@
 package pizzashop.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import pizzashop.model.MenuDataModel;
-import pizzashop.gui.OrdersGUI;
+import pizzashop.model.MenuPizza;
+import pizzashop.model.Order;
+import pizzashop.model.OrderPizza;
+import pizzashop.model.OrderState;
 import pizzashop.service.PaymentAlert;
-import pizzashop.service.PizzaService;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import pizzashop.service.PizzaException;
+import pizzashop.service.Service;
 
 public class OrdersGUIController {
 
     @FXML
-    private ComboBox<Integer> orderQuantity;
-    @FXML
-    private TableView orderTable;
-    @FXML
-    private TableColumn tableQuantity;
-    @FXML
-    protected TableColumn tableMenuItem;
-    @FXML
-    private TableColumn tablePrice;
-    @FXML
-    private Label pizzaTypeLabel;
-    @FXML
-    private Button addToOrder;
-    @FXML
-    private Label orderStatus;
-    @FXML
-    private Button placeOrder;
-    @FXML
-    private Button orderServed;
-    @FXML
-    private Button payOrder;
-    @FXML
-    private Button newOrder;
+    private TableView<MenuPizza> menuTable;
 
-    private   List<String> orderList = FXCollections.observableArrayList();
-    private List<Double> orderPaymentList = FXCollections.observableArrayList();
-    public static double getTotalAmount() {
-        return totalAmount;
-    }
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
+    @FXML
+    private TableView<OrderPizza> orderTable;
+
+    @FXML
+    private Button addToOrderButton;
+
+    @FXML
+    private Button placeOrderButton;
+
+    @FXML
+    private Label totalPriceLabel;
+
+    @FXML
+    private Spinner<Integer> quantitySpinner;
+
+    @FXML
+    private Button makePaymentButton;
+
+    @FXML
+    private Button backButton;
+
+    @FXML
+    void handleBack(ActionEvent event) {
+        Node node = (Node) event.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
     }
 
-    private PizzaService service;
+    @FXML
+    void handleAddToOrder(ActionEvent event) {
+        if (this.service.isKitchenClosed) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Kitchen is closed!");
+            alert.showAndWait();
+            this.handleBack(event);
+            return;
+        }
+
+        MenuPizza menuPizza = menuTable.getSelectionModel().getSelectedItem();
+
+        Integer quantity = quantitySpinner.getValue();
+
+        if (quantity == null || quantity < 1) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Quantity is invalid!");
+            alert.showAndWait();
+        }
+        else {
+            if (menuPizza != null) {
+                Order order = this.service.getOrder(this.tableNumber);
+                if (order != null && order.getState().equals(OrderState.READY)){
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "Order has already been placed!");
+                    alert.showAndWait();
+                    return;
+                }
+                OrderPizza orderPizza = new OrderPizza(menuPizza.getName(), menuPizza.getPrice(), quantity);
+                try {
+                    service.addToOrder(orderPizza, this.tableNumber);
+                } catch (PizzaException e) {
+                    e.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage());
+                    alert.showAndWait();
+                }
+
+                this.orderList.setAll(this.service.getOrder(this.tableNumber).getOrderList().values());
+                this.orderTable.setItems(orderList);
+
+                this.totalPriceLabel.setText(this.service.getTotalPrice(tableNumber).toString());
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Must select a pizza from menu!");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    @FXML
+    void handleMakePayment(ActionEvent event) {
+        Order order = this.service.getOrder(this.tableNumber);
+
+        if (order != null && order.getState() == OrderState.READY) {
+            try {
+                boolean isPaid = paymentAlert.showPaymentAlert(tableNumber, order.getTotalPrice());
+                if (isPaid) {
+                    this.service.notifyAllObservers();
+                    this.handleBack(event);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Order must be ready!");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    void handlePlaceOrder(ActionEvent event) {
+        Order order = this.service.getOrder(this.tableNumber);
+        if (order == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "There is no order!");
+            alert.showAndWait();
+            return;
+        }
+        if (order.getState().equals(OrderState.READY)){
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Order has already been placed!");
+            alert.showAndWait();
+            return;
+        }
+        this.service.changeOrderState(this.tableNumber, OrderState.RECEIVED);
+    }
+
+    private ObservableList<MenuPizza> menuData;
+    private ObservableList<OrderPizza> orderList;
+
+    private Service service;
     private int tableNumber;
 
-    public ObservableList<String> observableList;
-    private TableView<MenuDataModel> table = new TableView<MenuDataModel>();
-    private ObservableList<MenuDataModel> menuData;// = FXCollections.observableArrayList();
-    private Calendar now = Calendar.getInstance();
-    private static double totalAmount;
+    private PaymentAlert paymentAlert;
+
+//    public ObservableList<String> observableList;
+//    private TableView<OrderPizza> table = new TableView<OrderPizza>();
+//    private ObservableList<MenuPizza> menuData;// = FXCollections.observableArrayList();
+//    private Calendar now = Calendar.getInstance();
 
     public OrdersGUIController(){ }
 
-    public void setService(PizzaService service, int tableNumber){
+    public void setService(Service service, int tableNumber){
         this.service=service;
         this.tableNumber=tableNumber;
         initData();
-
+        this.paymentAlert = new PaymentAlert(service);
     }
 
     private void initData(){
         menuData = FXCollections.observableArrayList(service.getMenuData());
-        menuData.setAll(service.getMenuData());
-        orderTable.setItems(menuData);
+        menuTable.setItems(menuData);
 
-        //Controller for Place Order Button
-        placeOrder.setOnAction(event ->{
-            orderList= menuData.stream()
-                    .filter(x -> x.getQuantity()>0)
-                    .map(menuDataModel -> menuDataModel.getQuantity() +" "+ menuDataModel.getMenuItem())
-                    .collect(Collectors.toList());
-            observableList = FXCollections.observableList(orderList);
-            KitchenGUIController.order.add("Table" + tableNumber +" "+ orderList.toString());
-            orderStatus.setText("Order placed at: " +  now.get(Calendar.HOUR)+":"+now.get(Calendar.MINUTE));
-        });
+        Order order = service.getOrder(this.tableNumber);
+        orderList = FXCollections.observableArrayList();
+        if (order != null) {
+            orderList.setAll(order.getOrderList().values());
+            orderTable.setItems(orderList);
 
-        //Controller for Order Served Button
-        orderServed.setOnAction(event -> {orderStatus.setText("Served at: " + now.get(Calendar.HOUR)+":"+now.get(Calendar.MINUTE));
-        });
+            totalPriceLabel.setText(order.getTotalPrice().toString());
+        }
 
-        //Controller for Pay Order Button
-        payOrder.setOnAction(event -> {
-            orderPaymentList= menuData.stream()
-                    .filter(x -> x.getQuantity()>0)
-                    .map(menuDataModel -> menuDataModel.getQuantity()*menuDataModel.getPrice())
-                    .collect(Collectors.toList());
-            setTotalAmount(orderPaymentList.stream().mapToDouble(e->e.doubleValue()).sum());
-            orderStatus.setText("Total amount: " + getTotalAmount());
-            System.out.println("--------------------------");
-            System.out.println("Table: " + tableNumber);
-            System.out.println("Total: " + getTotalAmount());
-            System.out.println("--------------------------");
-            PaymentAlert pay = new PaymentAlert(service);
-            pay.showPaymentAlert(tableNumber, this.getTotalAmount());
-        });
+        //Controller for Place OrderPizza Button
+//        placeOrder.setOnAction(event ->{
+//            orderList= menuData.stream()
+//                    .filter(x -> x.getQuantity()>0)
+//                    .map(orderPizza -> orderPizza.getQuantity() +" "+ orderPizza.getName())
+//                    .collect(Collectors.toList());
+//            observableList = FXCollections.observableList(orderList);
+//            KitchenGUIController.order.add("Table" + tableNumber +" "+ orderList.toString());
+//            orderStatus.setText("OrderPizza placed at: " +  now.get(Calendar.HOUR)+":"+now.get(Calendar.MINUTE));
+//        });
+//
+//        //Controller for OrderPizza Served Button
+//        orderServed.setOnAction(event -> {orderStatus.setText("Served at: " + now.get(Calendar.HOUR)+":"+now.get(Calendar.MINUTE));
+//        });
+//
+//        //Controller for Pay OrderPizza Button
+//        payOrder.setOnAction(event -> {
+//            orderPaymentList= menuData.stream()
+//                    .filter(x -> x.getQuantity()>0)
+//                    .map(orderPizza -> orderPizza.getQuantity()* orderPizza.getPrice())
+//                    .collect(Collectors.toList());
+//            setTotalAmount(orderPaymentList.stream().mapToDouble(e->e.doubleValue()).sum());
+//            orderStatus.setText("Total amount: " + getTotalAmount());
+//            System.out.println("--------------------------");
+//            System.out.println("Table: " + tableNumber);
+//            System.out.println("Total: " + getTotalAmount());
+//            System.out.println("--------------------------");
+//            PaymentAlert pay = new PaymentAlert(service);
+//            pay.showPaymentAlert(tableNumber, this.getTotalAmount());
+//        });
     }
 
     public void initialize(){
-
-        //populate table view with menuData from OrderGUI
-        table.setEditable(true);
-        tableMenuItem.setCellValueFactory(
-                new PropertyValueFactory<MenuDataModel, String>("menuItem"));
-        tablePrice.setCellValueFactory(
-                new PropertyValueFactory<MenuDataModel, Double>("price"));
-        tableQuantity.setCellValueFactory(
-                new PropertyValueFactory<MenuDataModel, Integer>("quantity"));
-
-        //bind pizzaTypeLabel and quantity combo box with the selection on the table view
-        orderTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<MenuDataModel>() {
-        @Override
-        public void changed(ObservableValue<? extends MenuDataModel> observable, MenuDataModel oldValue, MenuDataModel newValue) {
-           pizzaTypeLabel.textProperty().bind(newValue.menuItemProperty());
-              }
-        });
-
-        //Populate Combo box for Quantity
-        ObservableList<Integer> quantityValues =  FXCollections.observableArrayList(0, 1, 2,3,4,5);
-        orderQuantity.getItems().addAll(quantityValues);
-        orderQuantity.setPromptText("Quantity");
-
-        //Controller for Add to order Button
-        addToOrder.setOnAction(event -> {
-            orderTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<MenuDataModel>(){
-            @Override
-            public void changed(ObservableValue<? extends MenuDataModel> observable, MenuDataModel oldValue, MenuDataModel newValue){
-            oldValue.setQuantity(orderQuantity.getValue());
-            orderTable.getSelectionModel().selectedItemProperty().removeListener(this);
-                }
-            });
-        });
-
-        //Controller for Exit table Button
-        newOrder.setOnAction(event -> {
-            Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION, "Exit table?",ButtonType.YES, ButtonType.NO);
-            Optional<ButtonType> result = exitAlert.showAndWait();
-            if (result.get() == ButtonType.YES){
-                Stage stage = (Stage) newOrder.getScene().getWindow();
-                stage.close();
-                }
-        });
+        quantitySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100));
     }
 }
