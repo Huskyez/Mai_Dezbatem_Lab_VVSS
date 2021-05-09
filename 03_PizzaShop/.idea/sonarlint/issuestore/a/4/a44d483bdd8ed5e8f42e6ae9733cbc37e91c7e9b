@@ -1,0 +1,20 @@
+
+k	java:S100›"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(§Ñ°Ï8”çä¦…/
+o	java:S100D"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢Ûß©øÿÿÿÿ8ïàÄ¦…/
+}
+java:S1192N"`Define a constant instead of duplicating this literal "Quantity must be greater than 0" 4 times.(ÀŞ‡Á8Æµà¦…/
+S
+java:S2696"6Make the enclosing method "static" or remove this set.(¹É¸¨8Çå£§…/
+o	java:S100!"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(î‡Õ…ûÿÿÿÿ8œäŠ¦…/
+k	java:S100®"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(éÌá¥8¤‚§…/
+k	java:S100‰"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(³»°¡8€Çä¦…/
+o	java:S100i"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ş‡üÿÿÿÿ8ıôİ¦…/
+H
+java:S5960)"+Remove this assertion from production code.(äıÜÔ8œ³§¦…/
+
+java:S4144"]Update this method so that its implementation is not identical to "prepareObject" on line 15.(Ş‚ÄÔıÿÿÿÿ8Æ‚£§…/
+i	java:S1004"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(÷ó¶{8ï¶¦…/
+j
+java:S1192$"HDefine a constant instead of duplicating this literal "Calzone" 7 times.(«ª¤Íÿÿÿÿÿ8ıôİ¦…/
+o	java:S100y"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ù½”„üÿÿÿÿ8Æµà¦…/
+o	java:S100W"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¯¸à•ûÿÿÿÿ8¹»İ¦…/
